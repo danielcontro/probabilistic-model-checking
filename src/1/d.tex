@@ -1,0 +1,99 @@
+\subsection{}
+
+\subsubsection*{Probability that the first machine failure occurs on the second day}
+
+Let $L : S \to \mathscr{P}(AP)$ be:
+\begin{itemize}
+	\item $L(s_0)=L(s_3) = \emptyset$
+	\item $L(s_1)=L(s_2) = L(s_4) =  \{fail\}$
+\end{itemize}
+then the property can be expressed as the CSL formula:
+\[
+	\mathbb{P}_{=?}[ \neg fail \Until^{[1,2]} fail ]
+\]
+The property can be evaluated by computing
+\[
+	Prob(s_0, \neg fail \Until^{[1,2]} fail) =
+	\sum_{i=0}^\infty\left( \gamma_{qt,i}\cdot \left( \prob^{unif(C[fail]} \right) ^i\cdot\underline{Prob}_{\neg fail}(\neg fail \Until^{[0,t'-t]} fail)\right)
+\]
+Where $\underline{Prob}_{\neg fail}(\neg fail \Until^{[0,t'-t]} fail) =
+	Prob(s, \neg fail \Until^{[0,t'-t]} fail)$ if $s \in Sat(\neg fail)$ and $0$ otherwise.
+
+\subsubsection*{Long-run probability of at least one machine being operational}
+
+Let $L : S \to \mathscr{P}(AP)$ be:
+\begin{itemize}
+	\item $L(s_0) = L(s_1) = L(s_3) = \{op\}$
+	\item $L(s_2) = L(s_4) =  \emptyset$
+\end{itemize}
+then the property can be expressed as the CSL formula:
+\[
+	S_{=?}[ op ]
+\]
+To evaluate the property we need to compute the steady-state probabilities
+$\underline{\pi}^C$ (remind that C is irreducible) by solving a system of
+linear equations similarly to what have been done in \ref{subsec:1_b}.
+Then we can compute the value of the quantitative property as
+\[
+	\sum_{s \vDash op} \underline{\pi}^C(s)
+\]
+
+\subsubsection*{Expected number of operational machines after exactly 30 days}
+
+Let $\iota : S \times S \to \mathbb{R}_{\ge 0} = \mathbf{0}$ (the 0 matrix) and
+$\underline{\rho} : S \to \mathbb{R}_{\ge 0} =
+	\begin{bmatrix}
+		2 \\ 1 \\ 0 \\ 1 \\ 0
+	\end{bmatrix}
+$
+then the property can be expressed as the CSL extended with rewards formula:
+\[
+	R_{=?}\llbracket \mathbf{I}^{=30} \rrbracket
+\]
+In order to evaluate it we need to compute
+\[
+	\sum_{s \in S} Exp(s, \mathbf{X}_{I=30})
+\]
+
+\subsubsection*{Expected amount of time spent repairing machines over the first year}
+
+Let $\iota : S \times S \to \mathbb{R}_{\ge 0} = \mathbf{0}$ and
+$\underline{\rho} : S \to \mathbb{R}_{\ge 0}$ be:
+\begin{align*}
+	\underline{\rho} =
+	\begin{bmatrix}
+		0 \\ 1 \\ 1 \\ 0 \\ 1
+	\end{bmatrix}
+\end{align*}
+then the property can be expressed as the CSL extended with rewards formula:
+\[
+	R_{=?}[ \mathbf{C}^{\le 365} ]
+\]
+and it can be evaluated by computing
+\[
+	\sum_{s \in S} Exp(s, \mathbf{X}_{C\le 365})
+\]
+
+\subsubsection*{Maximum expected time, computed from any state where at least one machine is not operational, before both machines become operational}
+
+Let $L : S \to \mathscr{P}(AP)$ be:
+\begin{itemize}
+	\item $L(s_0) = \{ bop \}$
+	\item $L(s_1) = L(s_2) = L(s_3) = L(s_4) = \emptyset$
+\end{itemize}
+and let $\iota : S \times S \to \mathbb{R}_{\ge 0} = \mathbf{0}$,
+$\underline{\rho} : S \to \mathbb{R}_{\ge 0}$ be:
+\begin{align*}
+	\underline{\rho} =
+	\begin{bmatrix}
+		0 \\ 1 \\ 1 \\ 1 \\ 1
+	\end{bmatrix}
+\end{align*}
+then the property can be expressed as the CSL extended with rewards formula:
+\[
+	R_{max=?}[ \Fin bop]
+\]
+and it can be evaluated by computing
+\[
+	\max \{ Exp(s, \mathbf{X}_{F bop}) \mid s \in S \}
+\]

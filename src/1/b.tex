@@ -1,0 +1,57 @@
+\subsection{}
+\label{subsec:1_b}
+
+Since all states of the CTMC C belong to a single BSCC, C is irreducible. In
+an irreducible CTMC the steady-state probabilities are independent of the
+initial state; thus there will be a unique solution for the steady-state
+probability vector, denoted by $\underline{\pi}$, which can be
+computed solving the following system of linear equations:
+\[
+	\begin{cases}
+		\underline{\pi} \cdot \mathbf{Q}  = \underline{0} \\
+		\sum_{s \in S} \pi_s = 1
+	\end{cases}
+\]
+
+where $\mathbf{Q}$ is the infinitesimal generator matrix of the CTMC C which
+is:
+\[
+	\mathbf{Q} =
+	\begin{bmatrix}
+		-\nicefrac{7}{30} & \nicefrac{1}{5}    & 0                & \nicefrac{1}{30}    & 0                \\
+		1                 & -\nicefrac{11}{10} & \nicefrac{1}{10} & 0                   & 0                \\
+		0                 & 1                  & -1               & 0                   & 0                \\
+		24                & 0                  & 0                & -\nicefrac{241}{10} & \nicefrac{1}{10} \\
+		0                 & 24                 & 0                & 1                   & -25
+	\end{bmatrix}
+\]
+
+and
+\[
+	\underline{\pi} =
+	\begin{bmatrix}
+		\pi_{s_0} & \pi_{s_1} & \pi_{s_2} & \pi_{s_3} & \pi_{s_4}
+	\end{bmatrix}
+\]
+
+thus we need to solve:
+\[
+	\def\arraystretch{2.1}
+	\begin{array}{cccccccccccc}
+		- & \dfrac{7}{30} \pi_{s_0} & + & \pi_{s_1}                &   &           & + & 24 \pi_{s_3}              &   &              & = & 0 \\
+		  & \dfrac{1}{5} \pi_{s_0}  & - & \dfrac{11}{10} \pi_{s_1} & + & \pi_{s_2} &   &                           & + & 24 \pi_{s_4} & = & 0 \\
+		  &                         &   & \dfrac{1}{10} \pi_{s_1}  & - & \pi_{s_2} &   &                           &   &              & = & 0 \\
+		  & \dfrac{1}{30} \pi_{s_0} &   &                          &   &           & - & \dfrac{241}{10} \pi_{s_3} & + & \pi_{s_4}    & = & 0 \\
+		  &                         &   &                          &   &           &   & \dfrac{1}{10} \pi_{s_3}   & - & 25 \pi_{s_4} & = & 0 \\
+		  & \pi_{s_0}               & + & \pi_{s_1}                & + & \pi_{s_2} & + & \pi_{s_3}                 & + & \pi_{s_4}    & = & 1
+	\end{array}
+\]
+
+which gives the solution:
+\[
+	\underline{\pi} \simeq
+	\begin{bmatrix}
+		0.818642 & 0.163837 & 0.016384 & 0.001132 & 0.000005
+	\end{bmatrix}
+\]
+

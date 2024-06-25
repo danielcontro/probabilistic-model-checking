@@ -1,0 +1,58 @@
+\subsection{}
+
+The states of the CTMC C are a triplet indicating the number of machines
+operational, the number of machines under maintenance and the number of machine
+that has failed. It has been assumed that a machine under maintenance can not
+fail. The CTMC model of the factory is the following:
+
+\begin{tikzpicture}[->, >=latex, shorten >=2pt, line width=0.5 pt, node distance=4 cm, initial text=]
+	\node [circle, draw, initial] (s0)               {2,0,0};
+	\node [circle, draw] (s1) [right of=s0] {1,0,1};
+	\node [circle, draw] (s2) [right of=s1] {0,0,2};
+	\node [circle, draw] (s3) [below of=s0] {1,1,0};
+	\node [circle, draw] (s4) [right of=s3] {0,1,1};
+
+	% left to right
+	\path (s0) edge [bend left] node [above] {$\nicefrac{1}{5}$} (s1);
+
+	\path (s1) edge [bend left] node [above] {$\nicefrac{1}{10}$} (s2);
+
+	\path (s3) edge [bend left] node [above] {$\nicefrac{1}{10}$} (s4);
+
+	% right to left
+	\path (s1) edge [bend left] node [below] {$1$} (s0);
+
+	\path (s2) edge [bend left] node [below] {$1$} (s1);
+
+	\path (s4) edge [bend left] node [below] {$1$} (s3);
+
+	% up to down
+	\path (s0) edge [bend right] node [left] {$\nicefrac{2}{30}$} (s3);
+
+	% down to up
+	\path (s3) edge [bend right] node [right] {$24$} (s0);
+
+	\path (s4) edge [bend right] node [right] {$24$} (s1);
+
+\end{tikzpicture}
+
+we will refer to the states of the CTMC C as follows:
+\begin{itemize}
+	\item $s_0 = (2,0,0)$
+	\item $s_1 = (1,0,1)$
+	\item $s_2 = (0,0,2)$
+	\item $s_3 = (1,1,0)$
+	\item $s_4 = (0,1,1)$
+\end{itemize}
+
+and the rate transition matrix of the CTMC C is:
+\[
+	\mathbf{R} =
+	\begin{bmatrix}
+		0  & \nicefrac{1}{5} & 0                & \nicefrac{1}{30} & 0                \\
+		1  & 0               & \nicefrac{1}{10} & 0                & 0                \\
+		0  & 1               & 0                & 0                & 0                \\
+		24 & 0               & 0                & 0                & \nicefrac{1}{10} \\
+		0  & 24              & 0                & 1                & 0
+	\end{bmatrix}
+\]

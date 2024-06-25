@@ -1,0 +1,138 @@
+\subsection{}
+
+\subsubsection{}
+
+The statement:
+\begin{center}
+	\emph{"What is the maximum probability of player 1 winning within 3 rounds?"}
+\end{center}
+can be expressed with the following PCTL formula:
+\[
+	\prob_{\max=?}[\Fin^{\le 3} win_1]
+\]
+
+\subsubsection{}
+
+Evaluating the formula $\prob_{\max=?}[\Fin^{\le 3} win_1]$ boils down to
+compute the quantity $\pmax(s_0, \Fin^{\le 3} win_1)$ defined recursively as
+follows:
+\begin{align*}
+	 & \pmax(s, \Fin^{\le k} \varphi) = \\
+	 & =
+	\begin{cases}
+		1
+		 & \text{if } s \in S^{yes}    \\
+		0
+		 & \text{if } s \in S^?, k = 0 \\
+		\max \left\{ \sum\limits_{s' \in S} \mu(s') \cdot \pmax(s', \Fin^{\le k-1} \varphi) \mid (\alpha, \mu) \in Steps(s) \right\}
+		 & \text{if }s \in S^?, k > 0
+	\end{cases}
+\end{align*}
+where $S^{yes} = Sat(\varphi) = Sat(win_1) = \{ s_3 \}$ and
+$S^? = S \setminus S^{yes} = \{ s_0, s_1, s_2, s_4 \}$.
+In particular we will compute the vector
+$\underline{\pmax}(\Fin^{\le 3} win_1)$ where
+\[
+	\underline{\pmax}(\Fin^{\le 0} win_1) = \begin{bmatrix} 0 & 0 & 0 & 1 & 0 \end{bmatrix}
+\]
+and
+\begin{align*}
+	\underline{\pmax}(\Fin^{\le k} win_1) & = Steps \cdot \underline{\pmax}(\Fin^{\le k-1} win_1)^T \\
+	                                      & = \begin{bmatrix}
+		                                          \pi_r & \pi_s & \pi_p & 0     & 0     \\
+		                                          \pi_p & \pi_r & \pi_s & 0     & 0     \\
+		                                          \pi_s & \pi_p & \pi_r & 0     & 0     \\
+		                                          \hline
+		                                          \pi_p & \pi_r & 0     & \pi_s & 0     \\
+		                                          \pi_s & \pi_p & 0     & \pi_r & 0     \\
+		                                          \pi_r & \pi_s & 0     & \pi_p & 0     \\
+		                                          \hline
+		                                          \pi_s & 0     & \pi_r & 0     & \pi_p \\
+		                                          \pi_r & 0     & \pi_p & 0     & \pi_s \\
+		                                          \pi_p & 0     & \pi_s & 0     & \pi_r \\
+		                                          \hline
+		                                          0     & 0     & 0     & 1     & 0     \\
+		                                          \hline
+		                                          0     & 0     & 0     & 0     & 1
+	                                          \end{bmatrix} \cdot
+	\begin{bmatrix}
+		\pmax(s_0, \Fin^{\le k-1} win_1) \\
+		\pmax(s_1, \Fin^{\le k-1} win_1) \\
+		\pmax(s_2, \Fin^{\le k-1} win_1) \\
+		\pmax(s_3, \Fin^{\le k-1} win_1) \\
+		\pmax(s_4, \Fin^{\le k-1} win_1)
+	\end{bmatrix}
+\end{align*}
+extracting at each iteration step the maximum value yielded by each state.
+Hence we have:
+\begin{align*}
+	\underline{\pmax}(\Fin^{\le 1} win_1) & = Steps \cdot \underline{\pmax}(\Fin^{\le 0} win_1)^T                              \\
+	                                      & = \begin{bmatrix}
+		                                          \max \{ 0, 0, 0 \} & \max \{ \pi_s, \pi_r, \pi_p \} & \max \{ 0, 0, 0 \} & 1 & 0
+	                                          \end{bmatrix} \\
+	                                      & = \begin{bmatrix} 0 & \pi_r & 0 & 1 & 0 \end{bmatrix}
+\end{align*}
+\begin{align*}
+	\underline{\pmax}(\Fin^{\le 2} win_1) & = Steps \cdot \underline{\pmax}(\Fin^{\le 1} win_1)^T                                                                         \\
+	                                      & = \begin{bmatrix}
+		                                          \max \{ \pi_s\pi_r, \pi_r^2, \pi_p\pi_r \} & \max \{ \pi_r^2 + \pi_s, \pi_p\pi_r + \pi_r, \pi_s\pi_r + \pi_p \} & 0 & 1 & 0
+	                                          \end{bmatrix} \\
+	                                      & = \begin{bmatrix} \pi_r^2 & \pi_p\pi_r + \pi_r & 0 & 1 & 0 \end{bmatrix}
+\end{align*}
+\begin{align*}
+	\underline{\pmax}(\Fin^{\le 3} win_1) & = Steps \cdot \underline{\pmax}(\Fin^{\le 2} win_1)^T \\
+	                                      & = \begin{bmatrix}
+		                                          \pi_r^2(2\pi_p + 1)                   &
+		                                          \pi_s\pi_r^2 + \pi_r(\pi_p^2+\pi_p+1) &
+		                                          \pi_r^3                               &
+		                                          1                                     &
+		                                          0
+	                                          \end{bmatrix}             \\
+	                                      & = \begin{bmatrix}
+		                                          0.6               &
+		                                          0.890\overline{6} &
+		                                          0.216             &
+		                                          1                 &
+		                                          0
+	                                          \end{bmatrix}
+\end{align*}
+Thus $\prob_{\max=?}[\Fin^{\le 3} win_1] = 0.6$.
+
+Since the strategy requested is relative to a step-bounded reachability
+property in general it will need to be a finite-memory one.
+In order to compute it we will need to perform backward computations and
+selecting the argmax of $\underline{\pmax}$ (action that yields the maximum
+probability) at each step starting from the goal state, namely:
+\begin{itemize}
+	\item $k=1$:
+	      \begin{align*}
+		       & \sigma_{\max}^1(s_0) = \_    \\
+		       & \sigma_{\max}^1(s_1) = paper \\
+		       & \sigma_{\max}^1(s_2) = \_
+	      \end{align*}
+	\item $k=2$:
+	      \begin{align*}
+		       & \sigma_{\max}^2(s_0) = paper \\
+		       & \sigma_{\max}^2(s_1) = paper \\
+		       & \sigma_{\max}^2(s_2) = \_
+	      \end{align*}
+	\item $k=3$:
+	      \begin{align*}
+		       & \sigma_{\max}^3(s_0) = paper \\
+		       & \sigma_{\max}^3(s_1) = paper \\
+		       & \sigma_{\max}^3(s_2) = paper
+	      \end{align*}
+\end{itemize}
+
+Thus obtaining $\sigma_{\max}(s) = paper$ for the property analyzed.
+
+
+\subsubsection{}
+
+In a setting where player 1 know player 2's strategy and plays optimally
+against it, in order to minimise the maximum probability of player 1 winning
+player 2 will need to minimise the maximum of mass of probability of player 1
+winning that leaks out at every step.
+Hence player 2 will need to adopt a strategy where every
+action is be equiprobable, thus the optimal strategy for player 2 will be
+$(\frac{1}{3}, \frac{1}{3}, \frac{1}{3})$.

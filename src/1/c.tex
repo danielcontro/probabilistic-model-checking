@@ -1,0 +1,32 @@
+\subsection{}
+
+Let $L:S \to \mathscr{P}(AP)$ be the labeling function of the CTMC C, where:
+\begin{center}
+	\begin{tabular}{l}
+		$L(s_0) = L(s_1) = \emptyset$                                     \\
+		$L(s_2) = \{both\_fail\}$ (will refer as $f$ for short)           \\
+		$L(s_3) = L(s_4) = \{maintenance\}$ (will refer as $m$ for short) \\
+	\end{tabular}
+\end{center}
+then the property can be expressed as the CSL formula:
+\[
+	\varphi = \prob_{<0.1}[ \neg m \Until^{[0, 1]} f ]
+\]
+
+For model checking the property $\varphi$ over the CTMC C we have to compute
+\[
+	Sat(\varphi) = \{s \in S \mid Prob(s, \neg m \mathbf{U}^{[0, 1]} f) < 0.1 \}
+\]
+In order to do so the problem is reduced to transient analysis by making
+states in $Sat(f)$ and in $Sat(m \wedge \neg f)$ absorbing constructing the
+CTMC $C[f][m \wedge \neg f]$ and exploiting uniformisation to compute the
+vector of probabilities $\underline{Prob}(\neg m \mathbf{U}^{[0, 1]} f) $.
+
+Thus we need to compute
+\[
+	\underline{Prob}(\neg m \mathbf{U}^{[0, 1]} f) = \sum_{i=0}^\infty \left( \gamma_{qt, i}\cdot(\mathbf{P}^{unif(C[f][m \wedge \neg f])})^i\cdot \underline{f} \right)
+\]
+Note that the infinite summation can be truncated safely approximating the
+result and that
+$(\mathbf{P}^{unif(C[f][m \wedge \neg f])})^i\cdot \underline{f}$ can be
+computed iteratively avoiding matrix powers.

@@ -1,0 +1,337 @@
+\subsection{}
+
+\[
+	Steps =
+	\begin{bmatrix}
+		0               & 0               & \nicefrac{4}{5} & \nicefrac{1}{5} \\
+		0               & \nicefrac{1}{2} & \nicefrac{1}{2} & 0               \\
+		\hline
+		\nicefrac{1}{2} & 0               & 0               & \nicefrac{1}{2} \\
+		\hline
+		0               & 0               & 1               & 0               \\
+		\hline
+		0               & 0               & 0               & 1
+	\end{bmatrix}
+\]
+
+\subsubsection{}
+
+\subsubsection*{$\prob_{>0.4} [\Next (a \vee b)]$:}
+
+The formula involves a lower probability bound thus it has to be computed the
+minimum probability of the formula for each state, namely:
+
+\begin{align*}
+	Sat(\prob_{>0.4} [\Next (a \vee b)]) & = \{ s \in S\ |\ \pmin(s, \Next (a \vee b)) > 0.4\}                                                            \\
+	                                     & = \{ s \in S\ |\ \min \left\{ \sum_{s' \in Sat(a \vee b)} \mu(s') \mid (a, \mu) \in Steps(s) \right\} > 0.4 \} \\
+\end{align*}
+where
+\[
+	Sat(a \vee b) = Sat(a) \cup Sat(b) = \{ s_2, s_3 \}
+\]
+let $\underline{a \vee b} = \begin{bmatrix} 0 \\ 0 \\ 1 \\ 1 \end{bmatrix}$ be
+the indicator function of $Sat(a \vee b)$, then the minimum probabilities can
+be computed at once by:
+\begin{itemize}
+	\item calculating $Steps \cdot \underline{a \vee b}$
+	\item extracting for each state the miminum probability
+\end{itemize}
+\[
+	Steps \cdot \underline{a \vee b} =
+	\begin{bmatrix}
+		0               & 0               & \nicefrac{4}{5} & \nicefrac{1}{5} \\
+		0               & \nicefrac{1}{2} & \nicefrac{1}{2} & 0               \\
+		\hline
+		\nicefrac{1}{2} & 0               & 0               & \nicefrac{1}{2} \\
+		\hline
+		0               & 0               & 1               & 0               \\
+		\hline
+		0               & 0               & 0               & 1
+	\end{bmatrix}
+	\cdot
+	\begin{bmatrix} 0 \\ 0 \\ 1 \\ 1 \end{bmatrix} =
+	\begin{bmatrix}
+		1               \\
+		\nicefrac{1}{2} \\
+		\hline
+		\nicefrac{1}{2} \\
+		\hline
+		1               \\
+		\hline
+		1
+	\end{bmatrix} \to
+	\begin{bmatrix}
+		\nicefrac{1}{2} \\
+		\nicefrac{1}{2} \\
+		1               \\
+		1
+	\end{bmatrix}
+\]
+Thus
+\begin{align*}
+	Sat(\prob_{>0.4} [\Next (a \vee b)]) & = \{ s \in S\ |\ \pmin(s, \Next (a \vee b)) > 0.4\} \\
+	                                     & = \{ s_0, s_1, s_2, s_3, s_4 \} = S
+\end{align*}
+hence the MDP satisfies the property.
+
+\subsubsection*{$\prob_{\le 0.4}  [\Glob (\neg b)] \wedge \prob_{\le 0.4} [\Fin a]$:}
+
+Notice that:
+\begin{align*}
+	\prob_{\le 0.4}  [\Glob \neg b] \wedge \prob_{\le 0.4} [\Fin a]
+	 & \equiv \prob_{\le 0.4}  [\neg \Fin b] \wedge \prob_{\le 0.4} [\Fin a] \\
+	 & \equiv \prob_{\ge 0.6}  [\Fin b] \wedge \prob_{\le 0.4} [\Fin a]
+\end{align*}
+
+\begin{align*}
+	Sat(\prob_{\ge 0.6}  [\Fin b] \wedge \prob_{\le 0.4} [\Fin a]) = Sat(\prob_{\ge 0.6} [\Fin b]) \cap Sat(\prob_{\le 0.4} [\Fin a])
+\end{align*}
+
+\subsubsection*{$Sat(\prob_{\ge 0.6}  [\Fin b])$:}
+\[
+	Sat(\prob_{\ge 0.6}  [\Fin b]) = \{s \in S\ |\ \pmin(s, \Fin b) \ge 0.6\}
+\]
+Thus it has to be applied the algorithm for computing reachability
+probabilities.
+
+First compute the sets $S^{\min=0} = \{s_3\}$, $Sat(b) = \{ s_2 \}$ and $S^? = \{ s_0, s_1 \}$.
+Then we can compute the reachability probabilities via a value iteration
+approach as follows:
+\begin{align*}
+	x_s^{(n)} =
+	\begin{cases}
+		1                                                                                                   & \text{if } s \in Sat(b)     \\
+		0                                                                                                   & \text{if } s \in S^{\min=0} \\
+		0                                                                                                   & \text{if } s \in S^?, n = 0 \\
+		\min \left\{ \sum\limits_{s' \in S} \mu(s')\cdot x_{s'}^{(n-1)} \mid (a, \mu) \in Steps(s) \right\} & \text{if } s \in S^?, n > 0
+	\end{cases}
+\end{align*}
+
+Obtaining:
+\[
+	\underline{x}^0 = \begin{bmatrix} 0 & 0 & 1 & 0 \end{bmatrix}
+\]
+\begin{align*}
+	\underline{x}^k & = Steps \cdot (\underline{x}^{k-1})^T                                                             \\
+	                & = \begin{bmatrix}
+		                    0               & 0               & \nicefrac{4}{5} & \nicefrac{1}{5} \\
+		                    0               & \nicefrac{1}{2} & \nicefrac{1}{2} & 0               \\
+		                    \hline
+		                    \nicefrac{1}{2} & 0               & 0               & \nicefrac{1}{2} \\
+		                    \hline
+		                    0               & 0               & 1               & 0               \\
+		                    \hline
+		                    0               & 0               & 0               & 1
+	                    \end{bmatrix} \cdot
+	\begin{bmatrix}
+		x_0^{(k-1)} \\
+		x_1^{(k-1)} \\
+		x_2^{(k-1)} \\
+		x_3^{(k-1)}
+	\end{bmatrix}                                                                                                      \\
+	                & = \begin{bmatrix}
+		                    \min \{ \frac{4}{5}x_2^{k-1}+\frac{1}{5}x_3^{k-1},
+		                    \frac{1}{2} x_1^{(k-1)} + \frac{1}{2} x_2^{(k-1)} \} &
+		                    \frac{1}{2} x_0^{(k-1)} + \frac{1}{2} x_3^{(k-1)}    & 1 & 0
+	                    \end{bmatrix}                                    \\
+	                & = \begin{bmatrix}
+		                    \min \{ \frac{4}{5}, \frac{1}{2} x_1^{(k-1)} + \frac{1}{2} \} & \frac{1}{2} x_0^{(k-1)} & 1 & 0
+	                    \end{bmatrix} \\
+\end{align*}
+\begin{align*}
+	\underline{x}^1 & = Steps \cdot (\underline{x}^{0})^T                                                               \\
+	                & = \begin{bmatrix}
+		                    \min \{ \frac{4}{5}, \frac{1}{2} x_1^{(k-1)} + \frac{1}{2} \} & \frac{1}{2} x_0^{(k-1)} & 1 & 0
+	                    \end{bmatrix} \\
+	                & = \begin{bmatrix}
+		                    \frac{1}{2} & 0 & 1 & 0
+	                    \end{bmatrix}
+\end{align*}
+\begin{align*}
+	\underline{x}^2 & = Steps \cdot (\underline{x}^{1})^T                                                               \\
+	                & = \begin{bmatrix}
+		                    \min \{ \frac{4}{5}, \frac{1}{2} x_1^{(k-1)} + \frac{1}{2} \} & \frac{1}{2} x_0^{(k-1)} & 1 & 0
+	                    \end{bmatrix} \\
+	                & = \begin{bmatrix}
+		                    \frac{1}{2} & \frac{1}{4} & 1 & 0
+	                    \end{bmatrix}
+\end{align*}
+\begin{align*}
+	\underline{x}^3 & = Steps \cdot (\underline{x}^{2})^T                                                               \\
+	                & = \begin{bmatrix}
+		                    \min \{ \frac{4}{5}, \frac{1}{2} x_1^{(k-1)} + \frac{1}{2} \} & \frac{1}{2} x_0^{(k-1)} & 1 & 0
+	                    \end{bmatrix} \\
+	                & = \begin{bmatrix}
+		                    \frac{5}{8} & \frac{1}{4} & 1 & 0
+	                    \end{bmatrix}
+\end{align*}
+\begin{align*}
+	\underline{x}^4 & = Steps \cdot (\underline{x}^{3})^T                                                               \\
+	                & = \begin{bmatrix}
+		                    \min \{ \frac{4}{5}, \frac{1}{2} x_1^{(k-1)} + \frac{1}{2} \} & \frac{1}{2} x_0^{(k-1)} & 1 & 0
+	                    \end{bmatrix} \\
+	                & = \begin{bmatrix}
+		                    \frac{5}{8} & \frac{5}{16} & 1 & 0
+	                    \end{bmatrix}
+\end{align*}
+\[
+	\dots
+\]
+\begin{align*}
+	\underline{x}^{17} & \simeq \begin{bmatrix}
+		                            0.666664 & 0.333328 & 1 & 0
+	                            \end{bmatrix}
+\end{align*}
+
+Hence $Sat(\prob_{\ge 0.6}  [\Fin b]) = \{ s_0, s_2 \}$
+
+\subsubsection*{$Sat(\prob_{\le 0.4} [\Fin a])$:}
+
+In this case we have to compute
+\begin{align*}
+	Sat(\prob_{\le 0.4} [\Fin a]) & = \{s \in S \mid \pmax(s, \Fin a) \le 0.4\}
+\end{align*}
+First of all precompute $S^{\max=0} = \{s_2\}$, $Sat(a) = \{ s_3 \}$
+and $S^? = \{ s_0, s_1 \}$.
+Then compute the reachability probabilities via value iteration as follows:
+\[
+	x_s^{(n)} =
+	\begin{cases}
+		1                                                                                            & \text{if } s \in Sat(a)     \\
+		0                                                                                            & \text{if } s \in S^{\max=0} \\
+		0                                                                                            & \text{if } s \in S^?, n = 0 \\
+		\max \left\{ \sum_{s' \in S} \mu(s')\cdot x_{s'}^{(n-1)} \mid (a, \mu) \in Steps(s) \right\} & \text{if } s \in S^?, n > 0
+	\end{cases}
+\]
+Obtaining:
+\[
+	\underline{x}^0 = \begin{bmatrix} 0 & 0 & 0 & 1 \end{bmatrix}
+\]
+\begin{align*}
+	\underline{x}^k & = Steps \cdot (\underline{x}^{k-1})^T                                   \\
+	                & = \begin{bmatrix}
+		                    0               & 0               & \nicefrac{4}{5} & \nicefrac{1}{5} \\
+		                    0               & \nicefrac{1}{2} & \nicefrac{1}{2} & 0               \\
+		                    \hline
+		                    \nicefrac{1}{2} & 0               & 0               & \nicefrac{1}{2} \\
+		                    \hline
+		                    0               & 0               & 1               & 0               \\
+		                    \hline
+		                    0               & 0               & 0               & 1
+	                    \end{bmatrix} \cdot
+	\begin{bmatrix}
+		x_0^{(k-1)} \\
+		x_1^{(k-1)} \\
+		x_2^{(k-1)} \\
+		x_3^{(k-1)}
+	\end{bmatrix}                                                                            \\
+	                & = \begin{bmatrix}
+		                    \max \{ \frac{4}{5}x_2^{k-1}+\frac{1}{5}x_3^{k-1},
+		                    \frac{1}{2} x_1^{(k-1)} + \frac{1}{2} x_2^{(k-1)} \} &
+		                    \frac{1}{2} x_0^{(k-1)} + \frac{1}{2} x_3^{(k-1)}    &
+		                    0                                                    &
+		                    1
+	                    \end{bmatrix}                \\
+	                & = \begin{bmatrix}
+		                    \max \{ \frac{1}{5}, \frac{1}{2} x_1^{(k-1)} \} &
+		                    \frac{1}{2} x_0^{(k-1)} + \frac{1}{2}           &
+		                    0                                               &
+		                    1
+	                    \end{bmatrix}                     \\
+\end{align*}
+
+\[
+	x^{(1)} = \begin{bmatrix}
+		\frac{1}{5} & \frac{1}{2} & 0 & 1
+	\end{bmatrix}
+\]
+\[
+	x^{(2)} = \begin{bmatrix}
+		\frac{1}{4} & \frac{3}{5} & 0 & 1
+	\end{bmatrix}
+\]
+\[
+	x^{(3)} =
+	\begin{bmatrix}
+		\frac{3}{10} & \frac{5}{8} & 0 & 1
+	\end{bmatrix}
+\]
+\[
+	\dots
+\]
+\[
+	x^{(12)} \simeq
+	\begin{bmatrix}
+		0.33327 & 0.666602 & 0 & 1
+	\end{bmatrix}
+\]
+Hence $Sat(\prob_{\le 0.4} [\Fin a]) = \{ s_0, s_2 \}$, thus
+\begin{align*}
+	Sat(\prob_{\ge 0.6}  [\Fin b] \wedge \prob_{\le 0.4} [\Fin a]) & = Sat(\prob_{\ge 0.6} [\Fin b]) \cap Sat(\prob_{\le 0.4} [\Fin a]) \\
+	                                                               & = \{ s_0, s_2 \} \cap \{ s_0, s_2 \}                               \\
+	                                                               & = \{ s_0, s_2 \}
+\end{align*}
+
+\subsubsection{}
+
+For computing $\pmax(s_0, \Fin^{\le 3} a)$ we can simply use the value
+iteration at step $k = 3$ previously calculated in the case of
+$Sat(\prob_{\le 0.4} [\Fin a])$, obtaining:
+\[
+	x^{(0)} = \begin{bmatrix} 0 & 0 & 0 & 1 \end{bmatrix}
+\]
+
+\begin{align*}
+	x^{(1)} & = \begin{bmatrix}
+		            \frac{1}{5} & \frac{1}{2} & 0 & 1
+	            \end{bmatrix}
+\end{align*}
+\[
+	x^{(2)} =
+	\begin{bmatrix}
+		\frac{1}{4} & \frac{3}{5} & 0 & 1
+	\end{bmatrix}
+\]
+\[
+	x^{(3)} =
+	\begin{bmatrix}
+		\frac{3}{10} & \frac{5}{8} & 0 & 1
+	\end{bmatrix}
+\]
+Hence $\pmax(s_0, \Fin^{\le 3} a) = \frac{3}{10}$.
+
+In order to provide the corresponding optimal policy we can use the following
+equation:
+\[
+	\sigma_{\max}^k(s) = \arg\max \left\{ \sum_{s' \in S} \mu(s')\cdot\pmax(s', \Fin^{\le k-1} \mid (\alpha, \mu) \in Steps(s) \right\}
+\]
+Thus obtaining $\sigma_{\max}^3(s_0) = \sigma_{\max}(s_0) = \beta$ and
+$\sigma_{\max}^1(s_0) = \sigma_{\max}(s_0s_1s_0) \alpha$.
+The scheduler is't sationary though since there's a step-bounded reachability
+property involved and some memory is needed to keep track of the history of the
+execution.
+
+\subsubsection{}
+
+Notice that
+\[
+	\prob_{> 0} [\Glob (\neg a \wedge \neg b)] \equiv \prob_{< 1}[\Fin (a \vee b)]
+\]
+Applying the precomputations of DTMC model checking we obtain
+$S^{no} = \emptyset$, $S^{yes} = S$ hence
+\[
+	\forall s. Prob(s, \Fin (a \vee b) = 1
+\]
+thus
+\[
+	Sat(\prob_{< 1}[\Fin (a \vee b)]) = \emptyset
+\]
+so the property isn't satisfied by the resulting Markov chain.
+
+Moreover the PCTL formula can't be expressed as an equivalent CTL formula,
+since the existence of a path satisfying a formula doesn't imply it's
+probability mass being greater than zero. For example consider the path
+$(s_0s_1)^\omega$, it would satisfy the CTL formula
+$\exists \Glob (\neg a \wedge \neg b)$ but it doesn't satisfy the PCTL formula
+$\prob_{> 0} [\Glob (\neg a \wedge \neg b)]$ since that path has a zero
+probability mass associated with it.

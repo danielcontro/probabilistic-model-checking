@@ -1,0 +1,315 @@
+\subsection{}
+
+An IMDP satisfies a PCTL property if for every induced MDP, the property holds.
+The induced MDP is obtained by fixing the probability distributions for
+each action. Thus the induced MDP is a regular MDP, and the PCTL property can
+be checked using the model checking algorithm for MDPs.
+
+We will define $\pmin$ and $\pmax$ for IMDPs as follows:
+\begin{itemize}
+	\item $\pmin^{I}(s, \psi) = \inf_{\sigma \in Adv,Steps^\star \in Steps}Prob^{\sigma}_{Steps*}(s, \psi)$
+	\item $\pmax^{I}(s, \psi) = \sup_{\sigma \in Adv,Steps^\star \in Steps}Prob^{\sigma}_{Steps*}(s, \psi)$
+\end{itemize}
+where $Steps^\star$ is a valuation of the transition probability functions of
+the IMDP and $Prob^{\sigma}_{Steps*}$ is the probability of satisfying the
+property $\psi$ with the transition probability functions $Steps^\star$.
+
+Moreover we will define the satisfaction relation for PCTL properties for IMDPs:
+\[
+	s \vDash_I \prob_{\sim p}[\phi] \Leftrightarrow \pmin^{I}(s, \phi) \sim p \text{ if } \sim \in \{ >, \ge \}
+\]
+\[
+	s \vDash_I \prob_{\sim p}[\phi] \Leftrightarrow \pmax^{I}(s, \phi) \sim p \text{ if } \sim \in \{ <, \le \}
+\]
+
+\subsubsection{}
+
+\[
+	Sat(\prob_{>0.4}[\Next(a \vee b)]) = \{s \in S \mid \pmin^I(s, \Next(a \vee b)) > 0.4 \}
+\]
+and
+\[
+	\pmin^I(s, \Next(a \vee b)) = \min \left\{ \sum_{s' \in Sat(a \vee b)} \mu(s') \mid (\alpha, \mathcal{M}) \in Steps(s), \mu \in \mathcal{M} \right\}
+\]
+\[
+	Sat(a \vee b) = \{ s_2, s_3 \} \Rightarrow \underline{a \vee b} = \begin{bmatrix} 0; & 0; & 1; & 1 \end{bmatrix}
+\]
+Since the probability distributions intervals involve two transition per action
+we will introduce a variable for each action denoting the probability of
+performing one transition and with the complement the probability of performing
+the other.
+Namely:
+\[
+	Steps^\star =
+	\begin{bmatrix}
+		0            & 0           & \mu_0^\alpha  & 1-\mu_0^\alpha \\
+		0            & \mu_0^\beta & 1-\mu_0^\beta & 0              \\
+		\hline
+		\mu_1^\alpha & 0           & 0             & 1-\mu_1^\alpha \\
+		\hline
+		0            & 0           & 1             & 0              \\
+		\hline
+		0            & 0           & 0             & 1              \\
+	\end{bmatrix}
+\]
+with $\mu_0^\alpha \in [0.7;0.9]$, $\mu_0^\beta \in [0.3;0.6]$ and
+$\mu_1^\alpha \in [0.3; 0.7]$.
+hence we can compute the minimum probability of satisfying the property:
+\begin{align*}
+	\underline{\pmin^I}(\Next (a \vee b)) & = Steps^\star \cdot \underline{a \vee b}                             \\
+	                                      & = \begin{bmatrix}
+		                                          0            & 0           & \mu_0^\alpha  & 1-\mu_0^\alpha \\
+		                                          0            & \mu_0^\beta & 1-\mu_0^\beta & 0              \\
+		                                          \hline
+		                                          \mu_1^\alpha & 0           & 0             & 1-\mu_1^\alpha \\
+		                                          \hline
+		                                          0            & 0           & 1             & 0              \\
+		                                          \hline
+		                                          0            & 0           & 0             & 1              \\
+	                                          \end{bmatrix} \cdot \begin{bmatrix} 0 \\ 0 \\ 1 \\ 1 \end{bmatrix}
+	                                      & = \begin{bmatrix}
+		                                          1                \\
+		                                          1 - \mu_0^\beta  \\
+		                                          \hline
+		                                          1 - \mu_1^\alpha \\
+		                                          \hline
+		                                          1                \\
+		                                          \hline
+		                                          1
+	                                          \end{bmatrix}
+\end{align*}
+Extracting the minimum probability we get:
+\begin{align*}
+	\underline{\pmin^I}(\Next (a \vee b)) & = \begin{bmatrix}
+		                                          1 - \mu_0^\beta  \\
+		                                          1 - \mu_1^\alpha \\
+		                                          1                \\
+		                                          1
+	                                          \end{bmatrix}
+\end{align*}
+and yielding the minimum of the probabilities induced by the variables we get
+\[
+	\underline{\pmin^I}(\Next (a \vee b)) =
+	\begin{bmatrix} [0.4;0.7] \\ [0.3;0.7] \\ 1 \\ 1 \end{bmatrix} =
+	\begin{bmatrix} 0.4 \\ 0.3 \\ 1 \\ 1 \end{bmatrix}
+\]
+thus $Sat(\prob_{>0.4}[\Next(a \vee b)]) = \{s \in S \mid \pmin^I(s, \Next(a \vee b)) > 0.4 \} = \{ s_2, s_3 \}$
+
+\subsubsection{}
+
+In order to check whether the IMDP satisfies the property
+$\prob_{\le 0.5}[\Fin^{\le 3} a ]$ we will compute
+\[
+	Sat(\prob_{\le 0.5}[\Fin^{\le 3} a]) = \{ s \in S \mid \pmax^I(s, \Fin^{\le 3} a) \le 0.5 \}
+\]
+hence we will compute $\pmax^I(s, \Fin^{\le 3} a)$ for each state $s$ by
+setting up a recursive equation, similarly to the MDP case.
+The intervals will be handled as in the previous question but this time the
+maximum probabilities will be extracted only at $k = 3$ if not trivial to do so
+at every step as for MDPs.
+
+First let's compute $S^{yes} = Sat(a) = \{ s_3 \}$, $S^{no} = \emptyset$ and
+$S^? = \{ s_0, s_1, s_2 \}$ and then setup the recursive equation
+
+\begin{align*}
+	 & \pmax^I(s, \Fin^{\le k} a) = \\
+	 & =
+	\begin{cases}
+		1                                                                                                                                                   & \text{if } s \in S^{yes}    \\
+		0                                                                                                                                                   & \text{if } s \in S^{no}     \\
+		0                                                                                                                                                   & \text{if } s \in S^?, k = 0 \\
+		\max \left\{ \sum\limits_{s' \in S} \mu(s')\cdot\pmax^I(s', \Fin^{\le k-1} a) \mid (\alpha, \mathcal{M}) \in Steps(s), \mu \in \mathcal{M} \right\} & \text{otherwise}
+	\end{cases}
+\end{align*}
+
+Hence getting:
+\[
+	\underline{\pmax^I}(\Fin^{\le 0} a) = \begin{bmatrix} 0 & 0 & 0 & 1 \end{bmatrix}
+\]
+\begin{align*}
+	\underline{\pmax^I}(\Fin^{\le 1} a) & = Steps^\star \cdot \underline{\pmax^I}(\Fin^{\le 0} a)              \\
+	                                    & = \begin{bmatrix}
+		                                        0            & 0           & \mu_0^\alpha  & 1-\mu_0^\alpha \\
+		                                        0            & \mu_0^\beta & 1-\mu_0^\beta & 0              \\
+		                                        \hline
+		                                        \mu_1^\alpha & 0           & 0             & 1-\mu_1^\alpha \\
+		                                        \hline
+		                                        0            & 0           & 1             & 0              \\
+		                                        \hline
+		                                        0            & 0           & 0             & 1              \\
+	                                        \end{bmatrix} \cdot \begin{bmatrix} 0 \\ 0 \\ 0 \\ 1 \end{bmatrix} \\
+	                                    & = \begin{bmatrix}
+		                                        1-\mu_0^\alpha   \\
+		                                        0                \\
+		                                        \hline
+		                                        1 - \mu_1^\alpha \\
+		                                        \hline
+		                                        0                \\
+		                                        \hline
+		                                        1
+	                                        \end{bmatrix}                                                   \\
+	                                    & = \begin{bmatrix}
+		                                        1-\mu_0^\alpha   \\
+		                                        1 - \mu_1^\alpha \\
+		                                        0                \\
+		                                        1
+	                                        \end{bmatrix}
+\end{align*}
+\begin{align*}
+	\underline{\pmax^I}(\Fin^{\le 2} a) & = Steps^\star \cdot \underline{\pmax^I}(\Fin^{\le 1} a)       \\
+	                                    & = \begin{bmatrix}
+		                                        0            & 0           & \mu_0^\alpha  & 1-\mu_0^\alpha \\
+		                                        0            & \mu_0^\beta & 1-\mu_0^\beta & 0              \\
+		                                        \hline
+		                                        \mu_1^\alpha & 0           & 0             & 1-\mu_1^\alpha \\
+		                                        \hline
+		                                        0            & 0           & 1             & 0              \\
+		                                        \hline
+		                                        0            & 0           & 0             & 1              \\
+	                                        \end{bmatrix} \cdot \begin{bmatrix}
+		                                                            1-\mu_0^\alpha   \\
+		                                                            1 - \mu_1^\alpha \\
+		                                                            0                \\
+		                                                            1
+	                                                            \end{bmatrix} \\
+	                                    & = \begin{bmatrix}
+		                                        1 - \mu_0^\alpha                              \\
+		                                        \mu_0^\beta(1 - \mu_1^\alpha)                 \\
+		                                        \hline
+		                                        \mu_1^\alpha(1-\mu_0^\alpha) + 1-\mu_1^\alpha \\
+		                                        \hline
+		                                        0                                             \\
+		                                        \hline
+		                                        1
+	                                        \end{bmatrix}
+	= \begin{bmatrix}
+		  1 - \mu_0^\alpha              \\
+		  \mu_0^\beta(1 - \mu_1^\alpha) \\
+		  \hline
+		  1 - \mu_0^\alpha \mu_1^\alpha \\
+		  \hline
+		  0                             \\
+		  \hline
+		  1
+	  \end{bmatrix}
+\end{align*}
+
+\begin{align*}
+	\underline{\pmax^I}(\Fin^{\le 3} a) & = Steps^\star \cdot \underline{\pmax^I}(\Fin^{\le 2} a)       \\
+	                                    & = \begin{bmatrix}
+		                                        0            & 0           & \mu_0^\alpha  & 1-\mu_0^\alpha \\
+		                                        0            & \mu_0^\beta & 1-\mu_0^\beta & 0              \\
+		                                        \hline
+		                                        \mu_1^\alpha & 0           & 0             & 1-\mu_1^\alpha \\
+		                                        \hline
+		                                        0            & 0           & 1             & 0              \\
+		                                        \hline
+		                                        0            & 0           & 0             & 1              \\
+	                                        \end{bmatrix} \cdot \begin{bmatrix}
+		                                                            1 - \mu_0^\alpha              \\
+		                                                            \mu_0^\beta(1 - \mu_1^\alpha) \\
+		                                                            \hline
+		                                                            1 - \mu_0^\alpha \mu_1^\alpha \\
+		                                                            \hline
+		                                                            0                             \\
+		                                                            \hline
+		                                                            1
+	                                                            \end{bmatrix} \\
+	                                    & = \begin{bmatrix}
+		                                        1 - \mu_0^\alpha                                         \\
+		                                        1 - \mu_0^\alpha                                         \\
+		                                        \mu_0^\beta(1 - \mu_0^\alpha \mu_1^\alpha)               \\
+		                                        \mu_0^\beta(1 - \mu_0^\alpha \mu_1^\alpha)               \\
+		                                        \hline
+		                                        \mu_1^\alpha(1-\mu_0^\alpha) + 1-\mu_1^\alpha            \\
+		                                        \mu_1^\alpha\mu_0^\beta(1-\mu_1^\alpha) + 1-\mu_1^\alpha \\
+		                                        \hline
+		                                        0                                                        \\
+		                                        \hline
+		                                        1                                                        \\
+	                                        \end{bmatrix}    \\
+	                                    & = \begin{bmatrix}
+		                                        1 - \mu_0^\alpha                                         \\
+		                                        \mu_0^\beta(1 - \mu_0^\alpha \mu_1^\alpha)               \\
+		                                        \hline
+		                                        1- \mu_0^\alpha\mu_1^\alpha                              \\
+		                                        \mu_1^\alpha\mu_0^\beta(1-\mu_1^\alpha) + 1-\mu_1^\alpha \\
+		                                        \hline
+		                                        0                                                        \\
+		                                        \hline
+		                                        1                                                        \\
+	                                        \end{bmatrix}
+\end{align*}
+Considering the maximum probabilities achievable we get:
+\begin{align*}
+	\underline{\pmax^I}(\Fin^{\le 3} a)
+	 & = \begin{bmatrix}
+		     1 - \mu_0^\alpha                                         \\
+		     \mu_0^\beta(1 - \mu_0^\alpha \mu_1^\alpha)               \\
+		     \hline
+		     1- \mu_0^\alpha\mu_1^\alpha                              \\
+		     \mu_1^\alpha\mu_0^\beta(1-\mu_1^\alpha) + 1-\mu_1^\alpha \\
+		     \hline
+		     0                                                        \\
+		     \hline
+		     1                                                        \\
+	     \end{bmatrix}
+	 & = \begin{bmatrix}
+		     0.3   \\
+		     0.474 \\
+		     \hline
+		     0.79  \\
+		     0.79  \\
+		     \hline
+		     0     \\
+		     \hline
+		     1     \\
+	     \end{bmatrix}
+	= \begin{bmatrix}
+		  0.474 \\
+		  0.79  \\
+		  0     \\
+		  1     \\
+	  \end{bmatrix}
+\end{align*}
+Thus $Sat(\prob_{\le 0.5}[\Fin^{\le 3} a]) = \{ s \in S \mid \pmax^I(s, \Fin^{\le 3} a) \le 0.5 \} = \{ s_0, s_2 \}$.
+
+\subsubsection{}
+
+For computing $\pmax^I(s, \phi_1 \Until^{\le k} \phi_2])$ we would need to
+setup a recursive equation as follows:
+\begin{align*}
+	 & \pmax^I(s, \phi_1 \Until^{\le k} \phi_2]) =                                                                                                  \\
+	 & = \begin{cases}
+		     1        & \text{if } s \in S^{yes}    \\
+		     0        & \text{if } s \in S^{no}     \\
+		     0        & \text{if } s \in S^?, k = 0 \\
+		     \max \left\{
+		     \sum\limits_{s' \in S} \mu(s')\cdot\pmax^I(s', \phi_1 \Until^{\le k-1} \phi_2) \mid (\alpha, \mathcal{M}) \in Steps(s), \mu \in \mathcal{M}
+		     \right\} & \text{otherwise}
+	     \end{cases}
+\end{align*}
+where $S^{yes} = Sat(\phi_2)$,
+$S^{no} = S \setminus (Sat(\phi_1) \cup Sat(\phi_2))$ and
+$S^? = S \setminus (Sat(\phi_1) \cup Sat(\phi_2))$.
+It can be noted the similarity to the recursive equation for the MDP case which is the following
+\begin{align*}
+	 & \pmax(s, \phi_1 \Until^{\le k} \phi_2]) =                                                                     \\
+	 & = \begin{cases}
+		     1        & \text{if } s \in S^{yes}    \\
+		     0        & \text{if } s \in S^{no}     \\
+		     0        & \text{if } s \in S^?, k = 0 \\
+		     \max \left\{
+		     \sum\limits_{s' \in S} \mu(s')\cdot\pmax(s', \phi_1 \Until^{\le k-1} \phi_2) \mid (\alpha, \mu) \in Steps(s)
+		     \right\} & \text{otherwise}
+	     \end{cases}
+\end{align*}
+however in the IMDP case we need to consider all the possible intervals for the
+transition probability function hence they arise in the recursive case.
+
+In order to incorporate the intervals for the computations we would need to
+define for eact action $n-1$ variables representing the actual transition
+probability distribution of the action, where $n$ is the number of transitions
+with an associated interval of probability distribution for the action.
+The computations should be performed parametrically and then evaluated at the
+last step in order to not prune out possible solutions.

@@ -1,0 +1,33 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{preamble}
+
+\RequirePackage{import}
+\RequirePackage{amsmath}
+\RequirePackage{amssymb}
+\RequirePackage{amsfonts}
+\RequirePackage{stmaryrd}
+\RequirePackage{tikz}
+\RequirePackage{todonotes}
+\RequirePackage{nicefrac}
+\RequirePackage{cancel}
+\RequirePackage{mathrsfs}
+
+\usetikzlibrary{shapes, arrows, fit, automata, positioning}
+
+\renewcommand{\thesubsection}{\thesection.\alph{subsection}}
+\renewcommand{\thesubsubsection}{\thesection.\alph{subsection}.\roman{subsubsection}}
+
+\newcommand{\Until}{\ensuremath{\mathbf{U}}}
+\newcommand{\prob}{\ensuremath{\mathbf{P}}}
+\newcommand{\rew}{\ensuremath{\mathbf{R}}}
+
+\newcommand{\pmin}{\ensuremath{p_{\min}}}
+\newcommand{\pmax}{\ensuremath{p_{\max}}}
+
+\newcommand{\Next}{\ensuremath{\mathbf{X}}}
+\newcommand{\Glob}{\ensuremath{\mathbf{G}}}
+\newcommand{\Fin}{\ensuremath{\mathbf{F}}}
+
+\title{Probabilistic and Statistical Model Checking: Exam}
+
+\author{Daniel Eduardo Contro \\ ID: 2062899}

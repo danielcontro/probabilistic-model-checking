@@ -1,0 +1,136 @@
+\subsection{}
+
+As suggested, for the sake of clarity, it will be presented a Markov chain for
+each of the possible actions of player 1, namely \emph{rock}, \emph{paper} and
+\emph{scissor}.
+
+\subsubsection*{Rock:}
+
+\begin{center}
+	\begin{tikzpicture}[->, >=latex, shorten >=1pt, line width=0.5 pt, node distance=3 cm, initial text=]
+		\tikzstyle{every state}=[circle, black, draw]
+		\tikzstyle{every loop}=[looseness=10]
+		\node [state, initial] (s0)                                    {$s_0$};
+		\node [state] (s1) [above right of=s0]  {$s_1$};
+		\node [state] (s2) [below right of=s0]  {$s_2$};
+		\node [state] (s3) [right of=s1]                      {$s_3$};
+		\node [state] (s4) [right of=s2]                      {$s_4$};
+
+		\node at ([shift={(0:1.2)}]s0) {$\{tie\}$};
+		\node at ([shift={(300:1)}]s1) {$\{lead_1\}$};
+		\node at ([shift={(60:1)}]s2) {$\{lead_2\}$};
+		\node at ([shift={(270:0.9)}]s3) {$\{win_1\}$};
+		\node at ([shift={(90:0.9)}]s4) {$\{win_2\}$};
+
+		\path
+		(s0)     edge [loop above] node [above]         {$\pi_r$} (s0)
+
+		(s0.55)  edge              node [sloped, above] {$\pi_s$} (s1.215)
+		(s1.235) edge              node [sloped, below] {$\pi_p$} (s0.35)
+		(s1)     edge              node [sloped, above] {$\pi_s$} (s3)
+		(s1)     edge [loop above] node [above]         {$\pi_r$} (s1)
+
+		(s0.305) edge              node [sloped, below] {$\pi_p$} (s2.145)
+		(s2.125) edge              node [sloped, above] {$\pi_s$} (s0.325)
+		(s2)     edge              node [sloped, above] {$\pi_p$} (s4)
+		(s2)     edge [loop below] node [below]         {$\pi_r$} (s2)
+
+		(s3) edge [loop right] (s3)
+		(s4) edge [loop right] (s4);
+	\end{tikzpicture}
+\end{center}
+
+\subsubsection*{Paper:}
+
+\begin{center}
+	\begin{tikzpicture}[->, >=latex, shorten >=1pt, line width=0.5 pt, node distance=3 cm, initial text=]
+		\tikzstyle{every state}=[circle, black, draw]
+		\tikzstyle{every loop}=[looseness=10]
+		\node [state, initial]  (s0)                      {$s_0$};
+		\node [state]           (s1) [above right of=s0]  {$s_1$};
+		\node [state]           (s2) [below right of=s0]  {$s_2$};
+		\node [state]           (s3) [right of=s1]        {$s_3$};
+		\node [state]           (s4) [right of=s2]        {$s_4$};
+
+		\node at ([shift={(0:1.2)}]s0)    {$\{tie\}$};
+		\node at ([shift={(300:1)}]s1)    {$\{lead_1\}$};
+		\node at ([shift={(60:1)}]s2)     {$\{lead_2\}$};
+		\node at ([shift={(270:0.9)}]s3)  {$\{win_1\}$};
+		\node at ([shift={(90:0.9)}]s4)   {$\{win_2\}$};
+
+		\path
+		(s0) edge [loop above] node [above] {$\pi_p$} (s0)
+
+		(s0.55)   edge              node [sloped, above] {$\pi_r$} (s1.215)
+		(s1.235)  edge              node [sloped, below] {$\pi_s$} (s0.35)
+		(s1)      edge              node [sloped, above] {$\pi_r$} (s3)
+		(s1)      edge [loop above] node [above]         {$\pi_p$} (s1)
+
+		(s0.305)  edge              node [sloped, below] {$\pi_s$} (s2.145)
+		(s2.125)  edge              node [sloped, above] {$\pi_r$} (s0.325)
+		(s2)      edge              node [sloped, above] {$\pi_s$} (s4)
+		(s2)      edge [loop below] node [below]         {$\pi_p$} (s2)
+
+		(s3) edge [loop right] (s3)
+		(s4) edge [loop right] (s4);
+	\end{tikzpicture}
+\end{center}
+
+\subsubsection*{Scissor:}
+
+\begin{center}
+	\begin{tikzpicture}[->, >=latex, shorten >=1pt, line width=0.5 pt, node distance=3 cm, initial text=]
+		\tikzstyle{every state}=[circle, black, draw]
+		\tikzstyle{every loop}=[looseness=10]
+		\node [state, initial]  (s0)                      {$s_0$};
+		\node [state]           (s1) [above right of=s0]  {$s_1$};
+		\node [state]           (s2) [below right of=s0]  {$s_2$};
+		\node [state]           (s3) [right of=s1]        {$s_3$};
+		\node [state]           (s4) [right of=s2]        {$s_4$};
+
+		\node at ([shift={(0:1.2)}]s0)    {$\{tie\}$};
+		\node at ([shift={(300:1)}]s1)    {$\{lead_1\}$};
+		\node at ([shift={(60:1)}]s2)     {$\{lead_2\}$};
+		\node at ([shift={(270:0.9)}]s3)  {$\{win_1\}$};
+		\node at ([shift={(90:0.9)}]s4)   {$\{win_2\}$};
+
+		\path
+		(s0)      edge [loop above] node [above]         {$\pi_s$} (s0)
+
+		(s0.55)   edge              node [sloped, above] {$\pi_p$} (s1.215)
+		(s1.235)  edge              node [sloped, below] {$\pi_r$} (s0.35)
+		(s1)      edge              node [sloped, above] {$\pi_p$} (s3)
+		(s1)      edge [loop above] node [above]         {$\pi_s$} (s1)
+
+		(s0.305)  edge              node [sloped, below] {$\pi_r$} (s2.145)
+		(s2.125)  edge              node [sloped, above] {$\pi_p$} (s0.325)
+		(s2)      edge              node [sloped, above] {$\pi_r$} (s4)
+		(s2)      edge [loop below] node [below]         {$\pi_s$} (s2)
+
+		(s3) edge [loop right] (s3)
+		(s4) edge [loop right] (s4);
+	\end{tikzpicture}
+\end{center}
+
+thus we obtain the following transition probability function (with actions in
+the order $rock, paper, scissor$)
+\[
+	Steps =
+	\begin{bmatrix}
+		\pi_r & \pi_s & \pi_p & 0     & 0     \\
+		\pi_p & \pi_r & \pi_s & 0     & 0     \\
+		\pi_s & \pi_p & \pi_r & 0     & 0     \\
+		\hline
+		\pi_p & \pi_r & 0     & \pi_s & 0     \\
+		\pi_s & \pi_p & 0     & \pi_r & 0     \\
+		\pi_r & \pi_s & 0     & \pi_p & 0     \\
+		\hline
+		\pi_s & 0     & \pi_r & 0     & \pi_p \\
+		\pi_r & 0     & \pi_p & 0     & \pi_s \\
+		\pi_p & 0     & \pi_s & 0     & \pi_r \\
+		\hline
+		0     & 0     & 0     & 1     & 0     \\
+		\hline
+		0     & 0     & 0     & 0     & 1
+	\end{bmatrix}
+\]
